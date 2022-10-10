@@ -1,0 +1,10 @@
+name "coreutils"
+description "coreutils modoki"
+targetPath "build"
+configuration "executable" {
+	targetType "executable"
+}
+configuration "static" {
+	targetType "executable"
+	dflags "-static" platform="posix"
+}
