@@ -12,6 +12,6 @@ pub fn help(writer: cmd.io.out, name: []const u8) void {
     writer.print(usage, .{name}) catch undefined;
 }
 
-pub fn exec(_: cmd.io) u8 {
+pub fn exec(_: cmd.io, _: [][]const u8) u8 {
     return 1;
 }

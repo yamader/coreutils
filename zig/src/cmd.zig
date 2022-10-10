@@ -19,8 +19,8 @@ pub const io = struct {
 };
 
 const Cmd = struct {
-    help: fn (writer: io.out, []const u8) void,
-    exec: fn (io: io) u8,
+    help: fn (writer: io.out, name: []const u8) void,
+    exec: fn (io: io, args: [][]const u8) u8,
 
     pub fn from(s: anytype) Cmd {
         return .{
@@ -63,11 +63,12 @@ pub fn run(args: [][]u8) u8 {
 
     if (mem.eql(u8, name, "coreutils")) {
         // argparse
+        // const a
         if (args.len >= 2) { //
             const subcmd = args[1];
             if (cmds.has(subcmd)) {
                 const cmd = cmds.get(subcmd).?;
-                ret = cmd.exec(cmd_io);
+                ret = cmd.exec(cmd_io, args[2..]);
             } else {
                 help(cmd_io.stderr, "coreutils");
                 ret = 1;
@@ -79,7 +80,7 @@ pub fn run(args: [][]u8) u8 {
     } else {
         if (cmds.has(name)) {
             const cmd = cmds.get(name).?;
-            ret = cmd.exec(cmd_io);
+            ret = cmd.exec(cmd_io, args[1..]);
         } else {
             help(cmd_io.stderr, "coreutils");
             ret = 1;
