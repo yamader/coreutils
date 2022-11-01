@@ -1,14 +1,13 @@
 #pragma once
 
-// https://github.com/yamader/mylib/tree/473575c/cxx/argparse.hh
+// https://github.com/yamader/mylib/tree/5e01fda/cxx/argparse.hh
 
 #include <algorithm>
 #include <cstddef>
+#include <deque>
 #include <map>
-#include <queue>
 #include <stdexcept>
 #include <string>
-#include <string_view>
 #include <variant>
 #include <vector>
 
@@ -34,7 +33,8 @@ class Args {
 
  public:
   const std::vector<std::string> raw_args;
-  std::queue<std::string> args;
+  std::deque<std::string> args;
+  size_t skip = 1;
 
   Args(int argc, char* argv[]): raw_args(argv, argv + argc) {}
 
@@ -54,13 +54,13 @@ class Args {
   }
 
   auto parse() -> void {
-    for(size_t i = 0; i < raw_args.size(); i++) {
+    for(size_t i = skip; i < raw_args.size(); i++) {
       auto& s = raw_args[i];
       if(s.starts_with('-')) {
         if(s.starts_with("--")) {
           if(s == "--") {
             i++;
-            for(; i < raw_args.size(); i++) args.push(raw_args[i]);
+            for(; i < raw_args.size(); i++) args.push_back(raw_args[i]);
             break;
           }
           auto eq_pos = s.find('=');
@@ -81,7 +81,7 @@ class Args {
           continue;
         }
         if(s == "-") {
-          args.push(s);
+          args.push_back(s);
           continue;
         }
         for(size_t j = 1; j < s.size(); j++) {
@@ -104,7 +104,7 @@ class Args {
         }
         continue;
       }
-      args.push(s);
+      args.push_back(s);
     }
   }
 

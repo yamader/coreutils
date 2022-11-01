@@ -1,35 +1,35 @@
 #include "../coreutils.hh"
 
-auto disp_true_help(std::ostream& os = std::cout) -> void {
-  disp_ver(os);
-  os <<
+auto show_true_help() {
+  std::cout <<
     "\n"
-    "Usage:\n"
-    "  true [options]\n"
+    "return true\n"
     "\n"
-    "Options:\n"
-    "  -h      show this help\n"
-    "  -v      show version\n"
+    "USAGE\n"
+    "  true [options...]\n"
+    "\n"
+    "OPTIONS\n"
+    "  -h, --help      show this help\n"
+    "  -v, --version   show version\n"
     "\n";
 }
 
 auto cmd_true(Context& ctx, Args& args) -> int {
-  args.def_flag("help", "--help", "-h");
-  args.def_flag("ver", "--version", "-v");
   try { args.parse(); }
   catch(std::invalid_argument& e) {
-    disp_true_help(std::cerr);
-    Fatal(ctx) << e.what();
+    Err(ctx) << e.what();
+    return 1;
   }
 
   if(args["help"].flag()) {
-    disp_true_help();
+    show_true_help();
     return 0;
   }
   if(args["ver"].flag()) {
-    disp_ver();
+    show_ver();
     return 0;
   }
+  if(args["dbg"].flag()) ctx.debug = true;
 
   return 0;
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 struct Context {
-  bool debugging = false;
+  bool debug = false;
   bool has_color = true;
+  std::string name = "coreutils";
 };

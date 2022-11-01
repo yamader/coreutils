@@ -1,40 +1,42 @@
 #include "../coreutils.hh"
 
-auto disp_coreutils_help(std::ostream& os = std::cout) -> void {
-  disp_ver(os);
-  os <<
+auto show_coreutils_help() {
+  std::cout <<
     "\n"
-    "Usage:\n"
-    "  coreutils [command] [options]\n"
+    "YamaD's coreutils\n"
     "\n"
-    "Commands:\n"
-    "  true    return true\n"
-    "  false   return false\n"
+    "USAGE\n"
+    "  coreutils <command> [options...]\n"
     "\n"
-    "Options:\n"
-    "  -h      show this help\n"
-    "  -v      show version\n"
+    "COMMANDS\n"
+    "  basename    print basename\n"
+    "  false       return false\n"
+    "  true        return true\n"
+    "\n"
+    "GLOBAL OPTIONS\n"
+    "  -h, --help      show this help\n"
+    "  -v, --version   show version\n"
     "\n";
 }
 
 auto cmd_coreutils(Context& ctx, Args& args) -> int {
-  args.def_flag("help", "--help", "-h");
-  args.def_flag("ver", "--version", "-v");
   try { args.parse(); }
   catch(std::invalid_argument& e) {
-    disp_coreutils_help(std::cerr);
-    Fatal(ctx) << e.what();
+    Err(ctx) << e.what();
+    return 1;
   }
 
   if(args["help"].flag()) {
-    disp_coreutils_help();
+    show_coreutils_help();
     return 0;
   }
   if(args["ver"].flag()) {
-    disp_ver();
+    show_ver();
     return 0;
   }
+  if(args["dbg"].flag()) ctx.debug = true;
 
-  disp_coreutils_help(std::cerr);
+  if(args.args.size())  Err(ctx) << "unknown command";
+  else                  Err(ctx) << "no commands";
   return 1;
 }
