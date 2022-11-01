@@ -1,11 +1,11 @@
-#include "cmds.hh"
+#include "../coreutils.hh"
 
-auto disp_true_help() -> void {
-  disp_ver();
-  std::cout <<
+auto disp_true_help(std::ostream& os = std::cout) -> void {
+  disp_ver(os);
+  os <<
     "\n"
     "Usage:\n"
-    "  coreutils true [options]\n"
+    "  true [options]\n"
     "\n"
     "Options:\n"
     "  -h      show this help\n"
@@ -13,10 +13,14 @@ auto disp_true_help() -> void {
     "\n";
 }
 
-auto cmd_true(Args& args) -> int {
+auto cmd_true(Context& ctx, Args& args) -> int {
   args.def_flag("help", "--help", "-h");
   args.def_flag("ver", "--version", "-v");
-  args.parse();
+  try { args.parse(); }
+  catch(std::invalid_argument& e) {
+    disp_true_help(std::cerr);
+    Fatal(ctx) << e.what();
+  }
 
   if(args["help"].flag()) {
     disp_true_help();
